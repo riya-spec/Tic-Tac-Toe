@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    *{
+      margin: 0px;
+      box-sizing: border-box;
+    }
+
+    #title{
+      height: 15vh;
+      width: 100vw;
+      margin-top: 1vh;
+      font-size: 15vh;
+      text-align: center;
+    }
+
+    .box {
+      background-color: rgb(200, 27, 27);
+      border: 2px solid rgb(0, 0, 0);
+    }
+
+    .flex{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+   
+  </style>
+</head>
+<body>
+  <div id="title"></div>
+  <code id="code"></code>
+</body>
+<script>
+
+
+  const n = Number(prompt("Enter the Number of Grid?"));
+ 
+  //create 2D array
+  const createGrid = (n) => {
+     return [...Array(n)].map((row) => Array(n).fill(-1))
+  }
+  let grid = createGrid(n);
+
+  //design part
+  let size = 0;
+  if(n>=3 && n<=1000){
+    const code = document.createElement("div"); 
+    code.style.marginTop = "2vh";
+    code.style.marginBottom = "2vh";
+
+    //generate the grid
+    size = 80/n;
+    for(let i=0; i< n; i++){ 
+      const row = document.createElement("div"); 
+      row.className = "flex"; 
+      for(let j = 0; j < n; j++){ 
+          const box = document.createElement("div"); 
+          box.className = "box";
+          box.id = `id-${i}-${j}`;
+          console.log(box.id)
+          box.style.width = `${size}vh`;
+          box.style.height = `${size}vh`;
+          
+          row.appendChild(box); 
+      } 
+      code.appendChild(row); 
+    }
+
+    document.getElementById("code").appendChild(code);
+  } else {
+    alert("Please enter a Valid Integer number less than and equal to 15 and greater than 3");
+    window.location.reload();
+  }
+
+
+  let count = 0;
+  const limit = n*n;
+
+  //turn messages function
+  let turn ;
+  const title = document.getElementById('title');
+
+  function turnMessage(number) {
+    if(number == limit){
+      title.innerText = `Game Over!!`;
+    }else if(number%2 == 0) {
+      turn = "O";
+      title.innerText = `${turn}'s Turn`;
+    } else {
+      turn = "X";
+      title.innerText = `${turn}'s Turn`;
+    }
+  }
+  turnMessage(count);
+  
+  //add click listener
+  document.addEventListener("click", e => {
+    const data = document.getElementById(`${e.target.id}`);
+    data.innerText = turn; //design fill
+    data.style.fontSize = `${size}vh`;
+    data.style.textAlign = "center";
+    const index = e.target.id.split('-');
+    grid[parseInt(index[1])][parseInt(index[2])] = turn; //2D array fill
+    document.getElementById(`id-${parseInt(index[1])}-${parseInt(index[2])}`).style.pointerEvents = 'none';
+    count++;
+    if(count > (2*n -2)) {
+      const res = checkWin(turn);
+      if(!res) turnMessage(count);
+    } else {
+      turnMessage(count);
+    }
+    
+  });
+
+
+  //checkWin
+  function checkWin(turn) {
+    // check win vertical
+    for(let i =0; i<n; i++){
+      let win = 0;
+      for(let j=0; j< n; j++){
+         if(grid[i][j] == turn) {
+            win++;
+         }
+      }
+      if(win == n) {
+        title.innerText = `${turn} Wins !!!`;
+        for(let j =0; j< n; j++) {
+          const select = document.getElementById(`id-${i}-${j}`);
+          select.style.backgroundColor = "green";
+        }
+        document.body.style.pointerEvents = 'none';
+        return true;
+      }
+    }
+    // check win horizontal
+    for(let i =0; i<n; i++){
+      let win = 0;
+      for(let j=0; j< n; j++){
+         if(grid[j][i] == turn) {
+            win++;
+         }
+      }
+      if(win == n) {
+        title.innerText = `${turn} Wins !!!`;
+        for(let j =0; j< n; j++) {
+          const select = document.getElementById(`id-${j}-${i}`);
+          select.style.backgroundColor = "green";
+        }
+        document.body.style.pointerEvents = 'none';
+        return true;
+      }
+    }
+    
+    //check win diagonal
+    let win = 0;
+    for(let i = 0, j = 0; i<n; i++, j++){
+      if(grid[i][j] == turn) {
+        win++;
+      }
+    }
+    if(win == n) {
+        for(let i = 0, j = 0; i<n; i++, j++){
+          const select = document.getElementById(`id-${i}-${j}`);
+          select.style.backgroundColor = "green";
+        }
+        title.innerText = `${turn} Wins !!!`;
+        document.body.style.pointerEvents = 'none';
+        return true;
+    }
+
+    win = 0;
+    for(let i = 0, j = n-1; i<n; i++, j--){
+      if(grid[i][j] == turn) {
+        win++;
+      }
+    }
+    if(win == n) {
+        for(let i = 0, j = n-1; i<n; i++, j--){
+          const select = document.getElementById(`id-${i}-${j}`);
+          select.style.backgroundColor = "green";
+        }
+        title.innerText = `${turn} Wins !!!`;
+        document.body.style.pointerEvents = 'none';
+        return true;
+    }
+  }
+
+</script>
+</html>
